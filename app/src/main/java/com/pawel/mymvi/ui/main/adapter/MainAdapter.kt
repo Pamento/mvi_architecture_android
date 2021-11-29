@@ -60,6 +60,10 @@ class MainAdapter(
         items.addAll(list)
     }
 
+    fun cleanList() {
+        items.clear()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item: Any = items[position]
         if (holder is UserViewHolder) {

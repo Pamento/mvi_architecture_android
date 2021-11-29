@@ -19,6 +19,8 @@ import com.pawel.mymvi.ui.main.viewState.MainState
 import com.pawel.mymvi.ui.main.viewmodel.MainViewModel
 import com.pawel.mymvi.util.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dog_fact_layout.*
+import kotlinx.android.synthetic.main.item_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -97,12 +99,16 @@ class MainActivity : AppCompatActivity() {
                         btn_fetchDogsFacts.visibility = View.GONE
                         renderDogsFactsList(it.dogsFacts)
                     }
+                    is MainState.GoBackToMainView -> {
+                        recyclerView.visibility = View.GONE
+                        buttonFetchUser.visibility = View.VISIBLE
+                        btn_fetchDogsFacts.visibility = View.VISIBLE
+                    }
                     is MainState.Error -> {
                         progressBar.visibility = View.GONE
                         buttonFetchUser.visibility = View.VISIBLE
                         Toast.makeText(this@MainActivity, it.error, Toast.LENGTH_SHORT).show()
                     }
-                    else -> {}
                 }
             }
         }
@@ -120,6 +126,17 @@ class MainActivity : AppCompatActivity() {
         users.let {
             adapter.addData(it)
         }
-        //adapter.notifyDataSetChanged()
+    }
+
+    override fun onBackPressed() {
+        if (dogListContainer != null || userListContainer != null) {
+            adapter.cleanList()
+            recyclerView.removeAllViews()
+            lifecycleScope.launch {
+                mainViewModel.userIntent.send(MainIntent.GoBackToMainView)
+            }
+        } else {
+            super.onBackPressed()
+        }
     }
 }

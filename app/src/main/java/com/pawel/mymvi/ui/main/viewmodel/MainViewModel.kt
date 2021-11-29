@@ -30,6 +30,7 @@ class MainViewModel(
                 when (it) {
                     is MainIntent.FetchUser -> fetchUser()
                     is MainIntent.FetchDogsFacts -> fetchDogsFacts()
+                    is MainIntent.GoBackToMainView -> clearRecyclerView()
                 }
             }
         }
@@ -54,6 +55,12 @@ class MainViewModel(
             } catch (e: Exception) {
                 MainState.Error(e.localizedMessage)
             }
+        }
+    }
+
+    private fun clearRecyclerView() {
+        viewModelScope.launch {
+            _state.value = MainState.GoBackToMainView
         }
     }
 }
